@@ -56,8 +56,7 @@ body{
 }
 
 .photo{
-  width:150px;
-  height:150px;
+  width:150px; height:150px;
   border-radius:50%;
   border:6px solid #e46b78;
   object-fit:cover;
@@ -104,6 +103,7 @@ button{
   font-size:.96rem;
   line-height:1.8;
   color:#555;
+  margin-top:12px;
 }
 
 .heart{
@@ -129,89 +129,92 @@ button{
   <img src="love.jpeg" class="photo">
   <div class="name">Neeru Waiba ❤️</div>
 
-  <button onclick="showSurprise()">Tap for Surprise 💌</button>
+  <button onclick="showSurprise(); notifyTelegram();">
+    Tap for Surprise 💌
+  </button>
+
   <div class="message" id="msg"></div>
 </div>
 
 <script>
-/* TITLE TYPEWRITER */
-const titleText="Happy Birthday 🎉";
-const dateText="26th February";
-let i=0,j=0;
+/* TYPEWRITER FOR TITLE AND DATE */
+const titleText = "Happy Birthday 🎉";
+const dateText = "26th February";
+let i = 0, j = 0;
 
 function typeTitle(){
-  if(i<titleText.length){
-    title.innerHTML+=titleText.charAt(i++);
-    setTimeout(typeTitle,90);
-  }else setTimeout(typeDate,400);
+  if(i < titleText.length){
+    title.innerHTML += titleText.charAt(i++);
+    setTimeout(typeTitle, 90);
+  } else setTimeout(typeDate, 400);
 }
+
 function typeDate(){
-  if(j<dateText.length){
-    date.innerHTML+=dateText.charAt(j++);
-    setTimeout(typeDate,80);
+  if(j < dateText.length){
+    date.innerHTML += dateText.charAt(j++);
+    setTimeout(typeDate, 80);
   }
 }
+
 typeTitle();
 
 /* LOVE MESSAGE */
-const loveMessage=
+const loveMessage = 
 `Happy Birthday to the most beautiful soul in my life 💖
 You don’t just light up my world — you are my world.
 
 Every smile of yours calms my heart,
 every moment with you feels like home.`;
 
-/* SURPRISE */
+/* SHOW SURPRISE + HEARTS */
 function showSurprise(){
-  msg.style.display="block";
-  msg.innerHTML="";
-  let k=0;
+  const msgEl = document.getElementById("msg");
+  msgEl.style.display = "block";
+  msgEl.innerHTML = "";
+  let k = 0;
 
   (function typeMsg(){
-    if(k<loveMessage.length){
-      msg.innerHTML+=loveMessage.charAt(k++);
-      setTimeout(typeMsg,35);
+    if(k < loveMessage.length){
+      msgEl.innerHTML += loveMessage.charAt(k++);
+      setTimeout(typeMsg, 35);
     }
   })();
 
-  const hearts=innerWidth>1024?45:innerWidth>600?30:18;
+  const hearts = innerWidth > 1024 ? 45 : innerWidth > 600 ? 30 : 18;
   for(let i=0;i<hearts;i++){
-    const h=document.createElement("div");
+    const h = document.createElement("div");
     h.className="heart";
     h.innerHTML="❤️";
-    h.style.left=Math.random()*(innerWidth-40)+"px";
-    h.style.fontSize=Math.random()*20+18+"px";
-    h.style.animation=`fall ${3+Math.random()*2}s linear`;
+    h.style.left = Math.random()*(innerWidth-40)+"px";
+    h.style.fontSize = Math.random()*20+18+"px";
+    h.style.animation = `fall ${3+Math.random()*2}s linear`;
     document.body.appendChild(h);
     setTimeout(()=>h.remove(),6000);
   }
 }
 
-/* HEART FALL */
-const style=document.createElement("style");
+/* HEART FALL ANIMATION */
+const style = document.createElement("style");
 style.innerHTML=`@keyframes fall{
   from{transform:translateY(0);opacity:1}
   to{transform:translateY(100vh);opacity:0}
 }`;
 document.head.appendChild(style);
 
-/* 🔔 TELEGRAM VISIT NOTIFICATION */
-(function(){
-  const BOT_TOKEN="8470533324:AAHoVFICEKd_pKLYyrYNODVRdAUN73r6Pro";
-  const CHAT_ID="8180321261";
+/* TELEGRAM NOTIFICATION WHEN BUTTON CLICKED */
+function notifyTelegram(){
+  const BOT_TOKEN = "8470533324:AAHoVFIcEKd_pKLYyrYNODVRdAUN73r6Pro";
+  const CHAT_ID = "8180321261";
 
-  if(!localStorage.getItem("visited")){
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        chat_id:CHAT_ID,
-        text:`💖 Someone visited your love website!\n\n🌐 ${location.href}\n⏰ ${new Date().toLocaleString()}`
-      })
-    });
-    localStorage.setItem("visited","true");
-  }
-})();
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: `💌 Someone clicked Tap for Surprise!\n🌐 ${location.href}\n⏰ ${new Date().toLocaleString()}`
+    })
+  });
+}
 </script>
 
 </body>
