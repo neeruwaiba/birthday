@@ -2,26 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Love ❤️</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: 'Poppins', sans-serif;
   background: #f3eaea;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  padding: 20px;
 }
 
-/* MAIN CARD */
+/* CARD */
 .wrapper {
   background: #eef3f2;
-  width: 360px;
+  width: 90%;
+  max-width: 360px;
   padding: 40px 25px;
   border-radius: 18px;
   text-align: center;
@@ -33,7 +41,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* TYPEWRITER TEXT */
+/* TEXT */
 .type {
   font-size: 1.6rem;
   font-weight: 600;
@@ -42,12 +50,9 @@ body {
 }
 
 .date {
-
   font-size: 0.95rem;
-  font-weight: bold;
   color: #777;
   margin-top: 5px;
-  min-height: 20px;
 }
 
 /* PHOTO */
@@ -85,9 +90,6 @@ button {
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   animation: pulse 2s infinite;
 }
 
@@ -111,19 +113,18 @@ button {
   to { opacity: 1; }
 }
 
-/* HEART FALL */
+/* HEART */
 .heart {
   position: fixed;
-  top: -20px;
-  font-size: 20px;
-  animation: fall 3s linear;
+  top: -40px;
+  pointer-events: none;
 }
 
-@keyframes fall {
-  to {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
+/* MOBILE TUNING */
+@media (max-width: 400px) {
+  .type { font-size: 1.3rem; }
+  .photo { width: 120px; height: 120px; }
+  .name { font-size: 1.1rem; }
 }
 </style>
 </head>
@@ -131,14 +132,10 @@ button {
 <body>
 
 <div class="wrapper">
-
-  <!-- TYPEWRITER -->
   <div class="type" id="title"></div>
   <div class="date" id="date"></div>
 
-  <!-- PHOTO -->
   <img src="love.jpeg" class="photo">
-
   <div class="name">Neeru Waiba ❤️</div>
 
   <button onclick="showSurprise()">Tap for Surprise 💌</button>
@@ -156,46 +153,75 @@ button {
 </div>
 
 <script>
-/* TYPEWRITER EFFECT */
+/* TYPEWRITER */
 const titleText = "Happy Birthday 🎉";
-const dateText = "26 February 2001";
-
-let i = 0;
-let j = 0;
+const dateText = "26th February 2001";
+let i = 0, j = 0;
 
 function typeTitle() {
   if (i < titleText.length) {
-    document.getElementById("title").innerHTML += titleText.charAt(i);
-    i++;
+    title.innerHTML += titleText.charAt(i++);
     setTimeout(typeTitle, 90);
-  } else {
-    setTimeout(typeDate, 400);
-  }
+  } else setTimeout(typeDate, 400);
 }
-
 function typeDate() {
   if (j < dateText.length) {
-    document.getElementById("date").innerHTML += dateText.charAt(j);
-    j++;
+    date.innerHTML += dateText.charAt(j++);
     setTimeout(typeDate, 80);
   }
 }
-
 typeTitle();
 
-/* SURPRISE */
+/* AUTO-ADAPTIVE HEARTS */
 function showSurprise() {
-  document.getElementById("msg").style.display = "block";
+  msg.style.display = "block";
 
-  for (let i = 0; i < 25; i++) {
+  const w = window.innerWidth;
+
+  let heartCount, minSize, maxSize, duration;
+
+  if (w > 1024) {        // Desktop
+    heartCount = 45;
+    minSize = 22;
+    maxSize = 42;
+    duration = [3, 5];
+  } else if (w > 600) {  // Tablet
+    heartCount = 30;
+    minSize = 18;
+    maxSize = 32;
+    duration = [3, 4.5];
+  } else {               // Mobile
+    heartCount = 18;
+    minSize = 14;
+    maxSize = 24;
+    duration = [2.5, 4];
+  }
+
+  for (let i = 0; i < heartCount; i++) {
     const h = document.createElement("div");
     h.className = "heart";
     h.innerHTML = "❤️";
-    h.style.left = Math.random() * 100 + "vw";
+
+    h.style.left = Math.random() * (window.innerWidth - 40) + "px";
+    h.style.fontSize =
+      Math.random() * (maxSize - minSize) + minSize + "px";
+    h.style.animation = `fall ${
+      Math.random() * (duration[1] - duration[0]) + duration[0]
+    }s linear`;
+
     document.body.appendChild(h);
-    setTimeout(() => h.remove(), 3000);
+    setTimeout(() => h.remove(), 6000);
   }
 }
+
+/* FALL ANIMATION */
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes fall {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(100vh); opacity: 0; }
+}`;
+document.head.appendChild(style);
 </script>
 
 </body>
